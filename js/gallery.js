@@ -65,37 +65,45 @@ const images = [
 ];
 
 
-const gallery = document.querySelector('.gallery');
 
-const createGalleryItem = ({ preview, original, description }) => {
-    return `
-        <li class="gallery-item">
-            <a class="gallery-link" href="${original}">
-                <img
-                    class="gallery-image"
-                    src="${preview}"
-                    data-source="${original}"
-                    alt="${description}"
-                />
-            </a>
-        </li>
-    `;
-};
+function createGalleryMarkup(images) {
+    return images.map(
+        ({ preview, original, description }) =>
 
-const galleryMarkup = images.map(createGalleryItem).join('');
-gallery.insertAdjacentHTML('beforeend', galleryMarkup);
+            `<li class="gallery-item">
+    <a class="gallery-link" href="${original}">
+    <img
+        class="gallery-image"
+        src="${preview}"
+        data-source="${original}"
+        alt="${description}"
+    />
+    </a>
+        </li>`
 
-gallery.addEventListener('click', (event) => {
+    ).join("");
+}
+
+
+const gallery = document.querySelector(".gallery");
+
+gallery.insertAdjacentHTML("beforeend", createGalleryMarkup(images));
+gallery.addEventListener("click", handleImageClick);
+
+function handleImageClick(event) {
     event.preventDefault();
 
-    const isImage = event.target.classList.contains('gallery-image');
-    if (!isImage) return;
+    if (event.currentTarget === event.target) {
+        return;
+    }
 
-    const imageSrc = event.target.dataset.source;
+    const imageSource = event.target.dataset.source;
+
+    const imageDescription = event.target.alt;
 
     const instance = basicLightbox.create(`
-        <img src="${imageSrc}" width="800" height="600">
-    `);
+        <img src="${imageSource}" width="800" height="600" alt="${imageDescription}">`);
 
     instance.show();
-});
+
+}
